@@ -1,0 +1,51 @@
+The cookie with a secure flag will only be sent over an HTTPS connection.(https://resources.infosecinstitute.com/securing-cookies-httponly-secure-flags/#gref)
+
+1. Https Configuration on your local
+
+Steps:
+
+Create a folder named "crt" in C:\Apache2 directory
+Add cert.conf and make-cert.bat files in it, i.e. C:/Apache2/crt directory 
+Edit the cert.conf file with notepad ++
+Locate all the {{ DOMAIN }} in the file and replace with your domain name
+For example: {{ DOMAIN }} changed into ---> dso.mars.localhost.dso.pentalog.fr
+Save the file 
+Next, Run the make-cert.bat
+Enter the domain name you provided, in our case --> dso.mars.localhost.dso.pentalog.fr then press Enter
+No need to fill in the questions that follows, Ignore them by pressing Enter until it says press any key to continue
+Next, a new folder will be automatically created in our "crt" folder i.e. dso.mars.localhost.dso.pentalog.fr folder
+Open it and run the server.crt file
+Then click on Install Certificate —  Ok — Choose Local Machine —  Next —  Choose Place all certificate in the following store — Select Trusted Root Certificate Authorities —  Click OK —  Next and Finish
+Note: ** Since you have already configured your host file , you can skip this step
+Next Open your host file as administrator in Notepad++ --> C:/Windows/System32/drivers/etc/host
+Add a new line ----- > 127.0.0.1 dso.mars.localhost.dso.pentalog.fr
+
+Save the file
+Next Open C:\Apache2\conf\extra\developpment\mars.conf
+Copy and Paste the VirtualHost with port 80 and add the following modifications:
+Change port to 443
+And add the following lines of code in it: 
+SSLEngine on
+SSLCertificateFile "crt/dso.mars.localhost.dso.pentalog.fr/server.crt"
+SSLCertificateKeyFile "crt/dso.mars.localhost.dso.pentalog.fr/server.key"
+Ensure that LoadModule ssl_module modules/mod_ssl.so and LoadModule headers_module modules/mod_headers.so are uncommented in your apache httpd.conf file
+Restart Apache
+Test in your browser as follows:
+*https://dso.mars.localhost.dso.pentalog.fr*
+2. Testing of Https
+
+A padlock will appear as follows:
+
+And the following will appear in your chrome developper tool
+
+ 
+
+3. Implementation of the Secure Flag
+
+In your apache configuration file (httpd.conf), locate the section # 'Main' server configuration 
+Add this line to code below it, Header set Set-Cookie Secure
+4. Testing Secure Flag
+
+The set-cookie in your Http Header will be set to secure
+
+And in the Application tab of your chrome developper tool, the following is displayed:
